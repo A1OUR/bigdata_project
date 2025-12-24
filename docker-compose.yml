@@ -34,3 +34,16 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+        
+  dash:
+    build: .                    # использует твой Dockerfile с зависимостями
+    command: python /workspace/dashboards/app.py
+    ports:
+      - "8050:8050"             # порт Dash
+    volumes:
+      - .:/workspace            # монтируем код
+    working_dir: /workspace
+    environment:
+      DB_HOST: postgres         # в Docker-сети БД доступна по имени сервиса
+    depends_on:
+      - prefect                # ждём, пока ETL завершится
