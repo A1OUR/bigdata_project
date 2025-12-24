@@ -1,0 +1,5 @@
+pandas==2.2.2
+psycopg2-binary==2.9.9
+sqlalchemy==2.0.30
+dask[complete]==2024.5.0
+# griffe не нужен — официальный образ Prefect уже содержит совместимую версию

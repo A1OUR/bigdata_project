@@ -1,0 +1,36 @@
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: prefect
+      POSTGRES_PASSWORD: prefect
+      POSTGRES_DB: climate_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./init_db.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U prefect -d climate_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  prefect:
+    build: .                     # Собираем из Dockerfile
+    command: >
+      bash -c "
+        prefect server start --host 0.0.0.0 &
+        sleep 10 &&
+        python /workspace/flows/load_flow.py &&
+        tail -f /dev/null
+      "
+    ports:
+      - "4200:4200"
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    environment:
+      DB_HOST: postgres
+    depends_on:
+      postgres:
+        condition: service_healthy
