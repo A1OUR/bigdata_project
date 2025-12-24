@@ -1,0 +1,45 @@
+prefect-1  | 
+prefect-1  |  ___ ___ ___ ___ ___ ___ _____ 
+prefect-1  | | _ \ _ \ __| __| __/ __|_   _| 
+prefect-1  | |  _/   / _|| _|| _| (__  | |  
+prefect-1  | |_| |_|_\___|_| |___\___| |_|  
+prefect-1  | 
+prefect-1  | Configure Prefect to communicate with the server with:
+prefect-1  | 
+prefect-1  |     prefect config set PREFECT_API_URL=http://0.0.0.0:4200/api
+prefect-1  | 
+prefect-1  | View the API reference documentation at http://0.0.0.0:4200/docs
+prefect-1  | 
+prefect-1  | Check out the dashboard at http://0.0.0.0:4200
+prefect-1  | 
+prefect-1  | 
+prefect-1  | 
+prefect-1  | /usr/local/lib/python3.11/contextlib.py:144: SAWarning: Skipped unsupported reflection of expression-based index ix_flow_run__coalesce_start_time_expected_start_time_desc
+prefect-1  |   next(self.gen)
+prefect-1  | /usr/local/lib/python3.11/contextlib.py:144: SAWarning: Skipped unsupported reflection of expression-based index ix_flow_run__coalesce_start_time_expected_start_time_asc
+prefect-1  |   next(self.gen)
+prefect-1  | 21:38:31.058 | INFO    | prefect.engine - Created flow run 'wandering-impala' for flow 'Climate ETL Pipeline'
+prefect-1  | 21:38:31.130 | INFO    | Flow run 'wandering-impala' - Created task run 'extract-0' for task 'extract'
+prefect-1  | 21:38:31.131 | INFO    | Flow run 'wandering-impala' - Executing 'extract-0' immediately...
+prefect-1  | /workspace/flows/etl_flow.py:10: DtypeWarning: Columns (2) have mixed types. Specify dtype option on import or set low_memory=False.
+prefect-1  |   df = pd.read_csv(csv_path)
+prefect-1  | 21:38:32.559 | INFO    | Task run 'extract-0' - Finished in state Completed()
+prefect-1  | 21:38:32.587 | INFO    | Flow run 'wandering-impala' - Created task run 'load_raw-0' for task 'load_raw'
+prefect-1  | 21:38:32.588 | INFO    | Flow run 'wandering-impala' - Executing 'load_raw-0' immediately...
+prefect-1  | /workspace/flows/etl_flow.py:21: SettingWithCopyWarning: 
+prefect-1  | A value is trying to be set on a copy of a slice from a DataFrame.
+prefect-1  | Try using .loc[row_indexer,col_indexer] = value instead
+prefect-1  | 
+prefect-1  | See the caveats in the documentation: https://pandas.pydata.org/pandas-docs/stable/user_guide/indexing.html#returning-a-view-versus-a-copy
+prefect-1  |   df["date"] = pd.to_datetime(df[["Year", "Month", "Day"]], errors="coerce")
+prefect-1  | 21:39:08.281 | INFO    | Task run 'load_raw-0' - Finished in state Completed()
+prefect-1  | 21:39:08.308 | INFO    | Flow run 'wandering-impala' - Created task run 'transform_to_analytics-0' for task 'transform_to_analytics'
+prefect-1  | 21:39:08.309 | INFO    | Flow run 'wandering-impala' - Executing 'transform_to_analytics-0' immediately...
+prefect-1  | 21:39:14.594 | INFO    | Task run 'transform_to_analytics-0' - Finished in state Completed()
+prefect-1  | 21:39:14.622 | INFO    | Flow run 'wandering-impala' - Created task run 'load_analytics-0' for task 'load_analytics'
+prefect-1  | 21:39:14.623 | INFO    | Flow run 'wandering-impala' - Executing 'load_analytics-0' immediately...
+prefect-1  | 21:39:14.821 | INFO    | Task run 'load_analytics-0' - Finished in state Completed()
+prefect-1  | 21:39:14.850 | INFO    | Flow run 'wandering-impala' - Finished in state Completed('All states completed.')
+prefect-1  | 📄 Прочитано 1715050 строк из CSV
+prefect-1  | ✅ Загружено 1715042 строк в raw_weather
+prefect-1  | 📈 Сохранено 4790 записей в climate_analytics

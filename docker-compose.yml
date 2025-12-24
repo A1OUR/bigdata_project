@@ -21,7 +21,7 @@ services:
       bash -c "
         prefect server start --host 0.0.0.0 &
         sleep 10 &&
-        python /workspace/flows/load_flow.py &&
+        python /workspace/flows/etl_flow.py &&
         tail -f /dev/null
       "
     ports:
