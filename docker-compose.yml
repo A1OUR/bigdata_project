@@ -16,7 +16,7 @@ services:
       retries: 5
 
   prefect:
-    build: .                     # Собираем из Dockerfile
+    build: .
     command: >
       bash -c "
         export PREFECT_API_SERVICES_FLOW_RUN_NOTIFICATIONS_ENABLED=false &&
@@ -37,14 +37,14 @@ services:
         condition: service_healthy
         
   dash:
-    build: .                    # использует твой Dockerfile с зависимостями
+    build: .
     command: python /workspace/dashboards/app.py
     ports:
-      - "8050:8050"             # порт Dash
+      - "8050:8050" 
     volumes:
-      - .:/workspace            # монтируем код
+      - .:/workspace
     working_dir: /workspace
     environment:
-      DB_HOST: postgres         # в Docker-сети БД доступна по имени сервиса
+      DB_HOST: postgres  
     depends_on:
-      - prefect                # ждём, пока ETL завершится
+      - prefect
