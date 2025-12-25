@@ -6,6 +6,7 @@
 docker compose up --build
 ```
 чтобы собрать образ контейнера
+
 4.	При последующем запуске достаточно запуска
 ```bash
 docker compose up
