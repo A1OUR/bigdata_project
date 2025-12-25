@@ -3,6 +3,8 @@ from prefect import flow, task
 from sqlalchemy import create_engine, text
 import dask.dataframe as dd
 import multiprocessing
+import io
+import psycopg2
 
 @task
 def extract(csv_path: str = "/workspace/data/city_temperature2005.csv"):
@@ -26,29 +28,36 @@ def load_raw(df):
     df = df[["City", "Country", "date", "avg_temp_c"]].rename(
         columns={"City": "city", "Country": "country"}
     )
-    
-    db_host = os.getenv("DB_HOST", "localhost")
-    db_url = f"postgresql://prefect:prefect@{db_host}:5432/climate_db"
 
     def write_partition(partition_df):
         if partition_df.empty:
             return 0
-        worker_engine = create_engine(db_url)
+        
+        db_host = os.getenv("DB_HOST", "localhost")
+        conn = psycopg2.connect(
+            host=db_host,
+            database="climate_db",
+            user="prefect",
+            password="prefect"
+        )
+        
         try:
-            partition_df.to_sql(
-                "raw_weather", 
-                worker_engine, 
-                if_exists="append",
-                index=False, 
-                chunksize=10000 
-            )
+            cursor = conn.cursor()
+            output = io.StringIO()
+            partition_df.to_csv(output, sep='\t', header=False, index=False)
+            output.seek(0)
+            
+            sql = "COPY raw_weather (city, country, date, avg_temp_c) FROM STDIN WITH (FORMAT csv, DELIMITER '\t')"
+            cursor.copy_expert(sql, output)
+            
+            conn.commit()
+            cursor.close()
         finally:
-            worker_engine.dispose()
+            conn.close()
+            
         return len(partition_df)
-    rows_per_partition = df.map_partitions(write_partition).compute()
-    
-    total_rows = sum(rows_per_partition)
-    return total_rows
+        
+    df.map_partitions(write_partition).compute()
     
 @task
 def transform_to_analytics():
