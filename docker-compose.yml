@@ -19,6 +19,7 @@ services:
     build: .                     # Собираем из Dockerfile
     command: >
       bash -c "
+        export PREFECT_API_SERVICES_FLOW_RUN_NOTIFICATIONS_ENABLED=false &&
         prefect server start --host 0.0.0.0 &
         sleep 10 &&
         python /workspace/flows/etl_flow.py &&

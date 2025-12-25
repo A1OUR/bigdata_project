@@ -26,7 +26,7 @@ def load_raw(df):
 
     # Подключение к БД
     db_host = os.getenv("DB_HOST", "localhost")
-    engine = create_engine(f"postgresql://prefect:prefect@{db_host}:5432/climate_db")
+    engine = create_engine(f"postgresql://prefect:prefect@{db_host}:5432/climate_db", pool_pre_ping=True)
     
     # Сохранение в raw_weather
     df[["City", "Country", "date", "avg_temp_c"]].rename(
@@ -39,7 +39,7 @@ def load_raw(df):
 @task
 def transform_to_analytics():
     db_host = os.getenv("DB_HOST", "localhost")
-    engine = create_engine(f"postgresql://prefect:prefect@{db_host}:5432/climate_db")
+    engine = create_engine(f"postgresql://prefect:prefect@{db_host}:5432/climate_db", pool_pre_ping=True)
     
     # 1. Читаем ВСЕ данные через pandas
     query = "SELECT city, date, avg_temp_c FROM raw_weather"
@@ -59,7 +59,7 @@ def transform_to_analytics():
 @task
 def load_analytics(df):
     db_host = os.getenv("DB_HOST", "localhost")
-    engine = create_engine(f"postgresql://prefect:prefect@{db_host}:5432/climate_db")
+    engine = create_engine(f"postgresql://prefect:prefect@{db_host}:5432/climate_db", pool_pre_ping=True)
     df.to_sql("climate_analytics", engine, if_exists="replace", index=False)
     print(f"📈 Сохранено {len(df)} записей в climate_analytics")
 
