@@ -1,4 +1,3 @@
--- raw_weather (уже есть)
 CREATE TABLE IF NOT EXISTS raw_weather (
         id SERIAL PRIMARY KEY,
         city TEXT,
@@ -7,7 +6,6 @@ CREATE TABLE IF NOT EXISTS raw_weather (
         avg_temp_c FLOAT
 );
 
--- НОВАЯ ТАБЛИЦА
 CREATE TABLE IF NOT EXISTS climate_analytics (
     city TEXT,
     year INTEGER,

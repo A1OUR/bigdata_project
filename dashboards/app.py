@@ -9,29 +9,25 @@ import plotly.express as px
 DB_HOST = os.getenv("DB_HOST", "postgres")
 DATABASE_URL = f"postgresql://prefect:prefect@{DB_HOST}:5432/climate_db"
 
-print("⏳ Dash: ожидание данных в climate_analytics...")
-
 while True:
     try:
         engine = create_engine(DATABASE_URL)
-        # Используем text() для совместимости с SQLAlchemy 2.0+
         with engine.connect() as conn:
             result = conn.execute(text("SELECT 1 FROM climate_analytics LIMIT 1"))
             if result.fetchone() is not None:
-                print("✅ Dash: данные найдены. Запуск сервера...")
                 break
     except Exception as e:
-        print(f"   └─ Ожидание данных... ({type(e).__name__})")
+        print()
     time.sleep(5)
 
-# Загрузка данных
 df = pd.read_sql("SELECT * FROM climate_analytics", engine)
+df = df.sort_values(by=["city", "year"])
 cities = sorted(df["city"].dropna().unique())
 
 app = dash.Dash(__name__)
 
 app.layout = html.Div([
-    html.H1("🌍 Климатические данные", style={"textAlign": "center"}),
+    html.H1("Климатические данные", style={"textAlign": "center"}),
     dcc.Dropdown(
         id="city-dropdown",
         options=[{"label": c, "value": c} for c in cities],
